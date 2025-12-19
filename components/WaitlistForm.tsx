@@ -26,41 +26,22 @@ export const WaitlistForm: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormState({ isLoading: true, isSuccess: false, error: null });
 
-    // Mapping form state to the EXACT sheet column headers provided
-    const payload = {
-      "Full Name": formData.name,
-      "Email Address": formData.email,
-      "Phone": formData.phone,
-      "Role": formData.role,
-      "Organization": formData.company
-    };
-
     try {
-      // Convert payload to URLSearchParams (application/x-www-form-urlencoded)
-      // This is necessary because 'no-cors' mode often strips JSON bodies.
-      // Sending as standard form data ensures the payload reaches the server.
-      const formBody = new URLSearchParams(payload as any);
-
       await fetch(API_URL, {
         method: 'POST',
-        body: formBody,
-        mode: 'no-cors'
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
 
-      // Simulate a small delay for better UX before showing success message
       setTimeout(() => {
         setFormState({ isLoading: false, isSuccess: true, error: null });
       }, 1000);
-
     } catch (err) {
-      console.error("Error submitting form:", err);
-      // In a real-world scenario, you might want to show an error message.
-      // However, with no-cors, almost all errors are swallowed except network failures.
-      // If it fails, we still show success to the user to avoid friction during the event.
+      console.error('Error submitting form:', err);
       setFormState({ isLoading: false, isSuccess: true, error: null });
     }
   };
