@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Prospect, FormState } from '../types';
 import { ArrowIcon, CheckIcon } from './ui/Icons';
 
-// Zoho Flow Webhook URL for handling form submissions (Test URL)
-const API_URL = 'https://flow.zohocloud.ca/110002161705/flow/webhook/incoming?zapikey=1001.f151fa683ea23f4aa9d854afd87565f7.fa2eef99ba5b97012588d7e082dd56bb&isdebug=false';
+// Netlify Function endpoint that forwards submissions server-side
+const API_URL = '/.netlify/functions/waitlist';
 
 export const WaitlistForm: React.FC = () => {
   const [formData, setFormData] = useState<Prospect>({
@@ -30,25 +30,19 @@ export const WaitlistForm: React.FC = () => {
     e.preventDefault();
     setFormState({ isLoading: true, isSuccess: false, error: null });
 
-    // Mapping form state to the EXACT sheet column headers provided
     const payload = {
-      "Full Name": formData.name,
-      "Email Address": formData.email,
-      "Phone": formData.phone,
-      "Role": formData.role,
-      "Organization": formData.company
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      role: formData.role,
+      company: formData.company,
     };
 
     try {
-      // Convert payload to URLSearchParams (application/x-www-form-urlencoded)
-      // This is necessary because 'no-cors' mode often strips JSON bodies.
-      // Sending as standard form data ensures the payload reaches the server.
-      const formBody = new URLSearchParams(payload as any);
-
       await fetch(API_URL, {
         method: 'POST',
-        body: formBody,
-        mode: 'no-cors'
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
       // Simulate a small delay for better UX before showing success message
