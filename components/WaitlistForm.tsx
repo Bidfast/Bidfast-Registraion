@@ -3,7 +3,7 @@ import { Prospect, FormState } from '../types';
 import { ArrowIcon, CheckIcon } from './ui/Icons';
 
 // Zoho Flow Webhook URL for handling form submissions (Test URL)
-const API_URL = 'https://flow.zohocloud.ca/110002161705/flow/webhook/incoming?zapikey=1001.bf307b754a6cce179f694a8981c790f5.f44979075ab37e1a468aa6e043c1b8b7&isdebug=true';
+const API_URL = 'https://flow.zohocloud.ca/110002161705/flow/webhook/incoming?zapikey=1001.f151fa683ea23f4aa9d854afd87565f7.fa2eef99ba5b97012588d7e082dd56bb&isdebug=false';
 
 export const WaitlistForm: React.FC = () => {
   const [formData, setFormData] = useState<Prospect>({
