@@ -51,13 +51,24 @@ export const handler = async (event) => {
       };
     }
 
-    const makeWebhookUrl = process.env.MAKE_WEBHOOK_URL;
+    let makeWebhookUrl = process.env.MAKE_WEBHOOK_URL;
     if (!makeWebhookUrl) {
       return {
         statusCode: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: 'MAKE_WEBHOOK_URL is not configured' }),
       };
+    }
+
+    // Handle URL format: if it contains @ (e.g., "id@hook.us2.make.com"), transform it
+    if (makeWebhookUrl.includes('@') && !makeWebhookUrl.includes('://')) {
+      const [webhookId, host] = makeWebhookUrl.split('@');
+      makeWebhookUrl = `https://${host}/${webhookId}`;
+    }
+
+    // Ensure the URL has a protocol prefix
+    if (!makeWebhookUrl.startsWith('http://') && !makeWebhookUrl.startsWith('https://')) {
+      makeWebhookUrl = `https://${makeWebhookUrl}`;
     }
 
     const payload = {
